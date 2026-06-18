@@ -63,7 +63,7 @@ public class PlayerController : MonoBehaviour
         );
 
         transform.position = pos;
-    }   
+    }
 
     private void OnTriggerEnter(Collider other)
     {
@@ -77,14 +77,34 @@ public class PlayerController : MonoBehaviour
 
             Debug.Log("Game Over!");
 
-            ObstacleSpawner spawner = FindAnyObjectByType<ObstacleSpawner>(); ;
+            // Stop obstacle spawning
+            ObstacleSpawner spawner =
+                FindAnyObjectByType<ObstacleSpawner>();
 
             if (spawner != null)
             {
                 spawner.StopSpawning();
             }
 
-            // Freeze the whole game
+            // Stop score counting
+            ScoreManager scoreManager =
+                FindAnyObjectByType<ScoreManager>();
+
+            if (scoreManager != null)
+            {
+                scoreManager.StopScore();
+            }
+
+            // Show Game Over screen
+            UIManager uiManager =
+                FindAnyObjectByType<UIManager>();
+
+            if (uiManager != null)
+            {
+                uiManager.ShowGameOver();
+            }
+
+            // Pause the game
             Time.timeScale = 0f;
         }
     }
