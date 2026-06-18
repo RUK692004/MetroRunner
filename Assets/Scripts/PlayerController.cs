@@ -3,7 +3,7 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     [Header("Movement Settings")]
-    public float laneDistance = 2f;
+    public float laneDistance = 3f;     // Match obstacle lanes (-3,0,3)
     public float laneSwitchSpeed = 10f;
     public float forwardSpeed = 8f;
 
@@ -50,10 +50,9 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-        // Target lane position
+        // Move to lane
         float targetX = currentLane * laneDistance;
 
-        // Move only on X axis
         Vector3 pos = transform.position;
 
         pos.x = Mathf.MoveTowards(
@@ -67,7 +66,7 @@ public class PlayerController : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        // Prevent multiple Game Over calls
+        // Ignore future collisions after Game Over
         if (isGameOver)
             return;
 

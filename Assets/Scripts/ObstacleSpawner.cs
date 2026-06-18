@@ -3,18 +3,25 @@ using UnityEngine;
 public class ObstacleSpawner : MonoBehaviour
 {
     public GameObject obstaclePrefab;
+
     public float spawnInterval = 2f;
+
     public float obstacleSpeed = 8f;
 
     private float[] lanes = { -3f, 0f, 3f };
 
     public Transform player;
 
+    private float timer = 0f;
+
+    private bool isSpawning = true;
+
     void Start()
     {
         if (player == null)
         {
-            GameObject found = GameObject.FindGameObjectWithTag("Player");
+            GameObject found =
+                GameObject.FindGameObjectWithTag("Player");
 
             if (found != null)
             {
@@ -23,22 +30,27 @@ public class ObstacleSpawner : MonoBehaviour
             else
             {
                 Debug.LogError("Player not found!");
-                return;
             }
         }
-
-        InvokeRepeating(nameof(SpawnObstacle), 1f, spawnInterval);
     }
 
-    void SpawnObstacle()
+    void Update()
     {
-        if (player == null)
+        if (!isSpawning || player == null)
             return;
 
-        Debug.Log("Obstacle Spawned");
+        timer += Time.deltaTime;
 
-        float laneX = lanes[Random.Range(0, lanes.Length)];
+        if (timer >= spawnInterval)
+        {
+            SpawnObstacle();
 
+            timer = 0f;
+        }
+    }
+
+    void CreateObstacle(float laneX)
+    {
         float zPos = player.position.z + 30f;
 
         GameObject obstacle = Instantiate(
@@ -46,6 +58,7 @@ public class ObstacleSpawner : MonoBehaviour
             new Vector3(laneX, 0.5f, zPos),
             Quaternion.identity
         );
+
         obstacle.tag = "Obstacle";
 
         ObstacleMovement movement =
@@ -53,17 +66,56 @@ public class ObstacleSpawner : MonoBehaviour
 
         if (movement == null)
         {
-            movement = obstacle.AddComponent<ObstacleMovement>();
+            movement =
+                obstacle.AddComponent<ObstacleMovement>();
         }
 
         movement.speed = obstacleSpeed;
 
-        movement.destroyZ = player.position.z - 10f;
+        movement.destroyZ =
+            player.position.z - 10f;
+    }
+    void SpawnObstacle()
+    {
+        int obstacleCount = 1;
+
+        if (player == null)
+            return;
+
+        int score =
+            FindAnyObjectByType<ScoreManager>().GetScore();
+
+        // Increase difficulty based on score
+        if (score > 150)
+            obstacleCount = 3;
+        else if (score > 60)
+            obstacleCount = 2;
+
+        // Always keep at least one lane free
+        int freeLane = Random.Range(0, lanes.Length);
+
+        for (int i = 0; i < lanes.Length; i++)
+        {
+            if (obstacleCount == 1)
+            {
+                i = Random.Range(0, lanes.Length);
+            }
+
+            if (i == freeLane)
+                continue;
+
+            CreateObstacle(lanes[i]);
+
+            obstacleCount--;
+
+            if (obstacleCount <= 0)
+                break;
+        }
     }
 
     // Stops creating new obstacles
     public void StopSpawning()
     {
-        CancelInvoke(nameof(SpawnObstacle));
+        isSpawning = false;
     }
 }

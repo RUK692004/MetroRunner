@@ -56,4 +56,8 @@ public class ScoreManager : MonoBehaviour
     {
         isGameOver = true;
     }
+    public int GetScore()
+    {
+        return score;
+    }
 }
