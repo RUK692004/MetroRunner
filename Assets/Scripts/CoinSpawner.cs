@@ -41,18 +41,74 @@ public class CoinSpawner : MonoBehaviour
         }
     }
 
-    void SpawnCoin()
+    void CreateCoin(
+    float laneX,
+    float zPos
+)
     {
-        float laneX =
-            lanes[Random.Range(0, lanes.Length)];
-
-        float zPos =
-            player.position.z + 25f;
-
         Instantiate(
             coinPrefab,
-            new Vector3(laneX, 1f, zPos),
+            new Vector3(
+                laneX,
+                1f,
+                zPos
+            ),
             Quaternion.identity
         );
+    }
+    void SpawnCoin()
+    {
+        float startZ =
+            player.position.z + 25f;
+
+        int pattern =
+            Random.Range(0, 4);
+
+        switch (pattern)
+        {
+            // Straight line
+            case 0:
+
+                for (int i = 0; i < 3; i++)
+                {
+                    CreateCoin(
+                        0f,
+                        startZ + i * 3f
+                    );
+                }
+
+                break;
+
+            // Zigzag
+            case 1:
+
+                CreateCoin(-3f, startZ);
+
+                CreateCoin(0f, startZ + 3f);
+
+                CreateCoin(3f, startZ + 6f);
+
+                break;
+
+            // All lanes
+            case 2:
+
+                CreateCoin(-3f, startZ);
+
+                CreateCoin(0f, startZ);
+
+                CreateCoin(3f, startZ);
+
+                break;
+
+            // Side lanes only
+            case 3:
+
+                CreateCoin(-3f, startZ);
+
+                CreateCoin(3f, startZ);
+
+                break;
+        }
     }
 }

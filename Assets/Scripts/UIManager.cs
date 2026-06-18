@@ -12,6 +12,8 @@ public class UIManager : MonoBehaviour
 
     public void RestartGame()
     {
+        AudioManager.Instance.PlayButton();
+
         Time.timeScale = 1f;
 
         SceneManager.LoadScene(

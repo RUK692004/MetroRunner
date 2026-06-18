@@ -75,6 +75,7 @@ public class PlayerController : MonoBehaviour
             isGameOver = true;
 
             Debug.Log("Game Over!");
+            AudioManager.Instance.PlayGameOver();
 
             // Stop obstacle spawning
             ObstacleSpawner spawner =

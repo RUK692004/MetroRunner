@@ -15,24 +15,41 @@ public class GameManager : MonoBehaviour
     {
         if (scoreManager == null ||
             obstacleSpawner == null)
-        {
             return;
+
+        int score =
+            scoreManager.GetScore();
+
+        // Beginner
+        if (score < 30)
+        {
+            obstacleSpawner.obstacleSpeed = 8f;
+
+            obstacleSpawner.spawnInterval = 1.8f;
         }
 
-        int score = scoreManager.GetScore();
+        // Intermediate
+        else if (score < 60)
+        {
+            obstacleSpawner.obstacleSpeed = 11f;
 
-        // Increase obstacle speed gradually
-        obstacleSpawner.obstacleSpeed =
-            Mathf.Min(
-                18f,
-                baseObstacleSpeed + score * 0.08f
-            );
+            obstacleSpawner.spawnInterval = 1.4f;
+        }
 
-        // Reduce spawn interval gradually
-        obstacleSpawner.spawnInterval =
-            Mathf.Max(
-                0.6f,
-                baseSpawnInterval - score * 0.01f
-            );
+        // Advanced
+        else if (score < 90)
+        {
+            obstacleSpawner.obstacleSpeed = 14f;
+
+            obstacleSpawner.spawnInterval = 1.0f;
+        }
+
+        // Very Advanced
+        else
+        {
+            obstacleSpawner.obstacleSpeed = 17f;
+
+            obstacleSpawner.spawnInterval = 0.7f;
+        }
     }
 }

@@ -9,6 +9,7 @@ public class Coin : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             Debug.Log("Coin Collected!");
+            AudioManager.Instance.PlayCoin();
 
             CoinManager.Instance.AddCoin();
 

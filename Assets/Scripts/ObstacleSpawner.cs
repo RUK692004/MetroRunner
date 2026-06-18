@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class ObstacleSpawner : MonoBehaviour
 {
-    public GameObject obstaclePrefab;
+    public GameObject[] obstaclePrefabs;
 
     public float spawnInterval = 2f;
 
@@ -53,8 +53,11 @@ public class ObstacleSpawner : MonoBehaviour
     {
         float zPos = player.position.z + 30f;
 
+        int randomIndex =
+            Random.Range(0, obstaclePrefabs.Length);
+
         GameObject obstacle = Instantiate(
-            obstaclePrefab,
+            obstaclePrefabs[randomIndex],
             new Vector3(laneX, 0.5f, zPos),
             Quaternion.identity
         );
@@ -75,40 +78,91 @@ public class ObstacleSpawner : MonoBehaviour
         movement.destroyZ =
             player.position.z - 10f;
     }
+
+    void CreateObstacle(
+    float laneX,
+    float zPos
+)
+    {
+        int randomIndex =
+        Random.Range(
+            0,
+            obstaclePrefabs.Length
+        );
+
+        GameObject obstacle =
+            Instantiate(
+                obstaclePrefabs[randomIndex],
+                new Vector3(
+                    laneX,
+                    0.5f,
+                    zPos
+                ),
+                Quaternion.identity
+            );
+
+        obstacle.tag = "Obstacle";
+
+        ObstacleMovement movement =
+            obstacle.GetComponent<ObstacleMovement>();
+
+        if (movement == null)
+        {
+            movement =
+                obstacle.AddComponent<
+                    ObstacleMovement>();
+        }
+
+        movement.speed =
+            obstacleSpeed;
+
+        movement.destroyZ =
+            player.position.z - 10f;
+    }
     void SpawnObstacle()
     {
-        int obstacleCount = 1;
-
         if (player == null)
             return;
 
-        int score =
-            FindAnyObjectByType<ScoreManager>().GetScore();
+        float zPos = player.position.z + 30f;
 
-        // Increase difficulty based on score
-        if (score > 150)
-            obstacleCount = 3;
-        else if (score > 60)
-            obstacleCount = 2;
+        int pattern =
+            Random.Range(0, 4);
 
-        // Always keep at least one lane free
-        int freeLane = Random.Range(0, lanes.Length);
-
-        for (int i = 0; i < lanes.Length; i++)
+        switch (pattern)
         {
-            if (obstacleCount == 1)
-            {
-                i = Random.Range(0, lanes.Length);
-            }
+            // Left + Middle blocked
+            case 0:
 
-            if (i == freeLane)
-                continue;
+                CreateObstacle(-3f, zPos);
 
-            CreateObstacle(lanes[i]);
+                CreateObstacle(0f, zPos);
 
-            obstacleCount--;
+                break;
 
-            if (obstacleCount <= 0)
+            // Middle + Right blocked
+            case 1:
+
+                CreateObstacle(0f, zPos);
+
+                CreateObstacle(3f, zPos);
+
+                break;
+
+            // Left + Right blocked
+            case 2:
+
+                CreateObstacle(-3f, zPos);
+
+                CreateObstacle(3f, zPos);
+
+                break;
+
+            // Middle only
+            case 3:
+
+                CreateObstacle(0f, zPos);
+
                 break;
         }
     }
