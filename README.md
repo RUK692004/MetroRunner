@@ -109,3 +109,18 @@ Developed as a learning project to strengthen Unity and C# game development skil
 This project is for educational purposes.
 
 ## 📂 Project Structure (Example)
+
+Assets/
+├── Scripts/
+│ ├── PlayerController.cs
+│ ├── GroundManager.cs
+│ ├── ObstacleSpawner.cs
+│ ├── UIManager.cs
+│ ├── AudioManager.cs
+│ └── ScoreManager.cs
+├── Scenes/
+│ ├── StartMenu.unity
+│ └── GameScene.unity
+├── Audio/
+├── Prefabs/
+└── Materials/
